@@ -41,11 +41,50 @@ const validarCrearCuenta = [
 		.matches("^([\Na-zA-ZáéíóúÁÉÍÓÚñÑ' ]+)$").withMessage('los nombres solo deben de tener letras'),  
 ]
 
+const validarEditarCuenta = [
+	body('correo')
+		.optional().bail()
+		.isEmail().withMessage('Ingresa un correo valido').bail()
+		.custom(async (correo, { req }) => {
+			const usuario = await Usuario.findOne({correo});
+			const usuarioEditado = await Usuario.findById(req.params.id);
+			
+			if(usuario && usuarioEditado.correo !== correo) throw new Error('correo existente');
+
+			return true;
+		}),
+    
+	body('password')
+		.optional().bail()
+		.isString().withMessage('Ingrese un password valido').bail()
+		.isLength({min: 8}).withMessage('La contraseña debe tener al menos 8 caracteres'),
+    
+    body('nombres')
+		.optional().bail()
+		.isString().withMessage('Ingresa un nombre valido').bail()
+        .matches("^([\Na-zA-ZáéíóúÁÉÍÓÚñÑ' ]+)$").withMessage('los nombres solo deben de tener letras'),
+                    	
+	body('rol')
+		.optional().bail()
+		.isString().withMessage('Ingresa un rol valido').bail()
+		.custom(verificarRol),
+	
+	body('telefono')
+		.optional().bail()
+		.isString().withMessage('El telefono debe ser string').bail()
+		.matches("^[0-9]{11}$").withMessage('el telefono solo debe tener numeros y un tamaño de 11 caracteres').bail(),
+    body('direccion')
+		.optional().bail()
+		.isString().withMessage('Ingresa una direccion valida'),
+]
+
+
 
 // funcion para saber si el token es valido
 const auth = passport.authenticate('jwt', {session: false});
 
 module.exports = {
 	validarCrearCuenta,
+    validarEditarCuenta,
 	auth
 }
