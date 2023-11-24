@@ -57,7 +57,36 @@ const validarCrearPizza = [
 		.custom(validaNegativo)
 ]
 
+const validarEditarPizza = [
+	body("nombre").optional().bail()
+    .isString().withMessage("Ingresa un nombre valido").bail()
+		.custom(async (nombre, { req }) => {
+			const pizza = await Pizza.findOne({nombre});
+			const pizzaEditada = await Pizza.findById(req.params.id);
+			
+			if(pizza && pizzaEditada.nombre !== nombre) throw new Error('nombre existente');
+			return true;
+		}),
+  body("ingredientes").optional().bail()
+		.isString().withMessage("Ingresa ingredientes validos"),
+	body("cantidad").optional().bail()
+		.isNumeric().withMessage("Ingresa un monto valido").bail()
+		.custom(validaNegativo),
+	body("familiar").optional().bail()
+		.isNumeric().withMessage("Ingresa un monto familiar valido").bail()
+		.custom(validaNegativo),
+	body("grande").optional().bail()
+		.isNumeric().withMessage("Ingresa un monto grande valido").bail()
+		.custom(validaNegativo),
+	body("pequena").optional().bail()
+		.isNumeric().withMessage("Ingresa un monto pequena valido").bail()
+		.custom(validaNegativo),
+	body("porcion").optional().bail()
+		.isNumeric().withMessage("Ingresa un monto porcion valido").bail()
+		.custom(validaNegativo),
+]
 module.exports = {
 	validarCrearPizza,
+	validarEditarPizza,
 	cargarImagen,
 }
