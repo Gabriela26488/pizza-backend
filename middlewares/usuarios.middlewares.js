@@ -1,6 +1,9 @@
 const { body } = require('express-validator');
 const passport = require('passport');
+const multer = require('multer');
+const {extname} = require("path");
 const Usuario = require('../models/Usuario');
+const sharp = require('sharp');
 
 
 // funciones para usarlas en los middlewares de validacion
@@ -21,6 +24,32 @@ const verificarRol = (rol) => {
 		return true;
 	}
 	throw new Error('el rol es incorrecto');
+}
+
+const cargarImagen = multer({
+
+	storage: multer.diskStorage({
+	  destination: "public/images/usuarios",
+	  filename: async (req, file, cb) => {
+		const extension = extname(file.originalname);
+		const name = file.originalname.split(extension)[0];
+		cb(null, `${name}-${Date.now()}${extension}`);
+	  },
+	}),
+
+	fileFilter: (req, file, cb) => {
+	  if(["image/jpeg", "image/png"].includes(file.mimetype)) cb(null, true);
+	  else cb(new Error("solo acepta formato jpg y png"));
+  
+	},
+	
+}).single("imagen");
+
+const resizeImg = (path, name, width, height, dir) => {
+    sharp(path)
+        .resize(width, height, {fit: "cover"})
+        .toFile(`public/images/resized/${dir}/${name}`);
+    return `public/images/resized/${dir}/${name}`;
 }
 
 // middlewares que valida los datos enviados a la ruta
@@ -86,5 +115,7 @@ const auth = passport.authenticate('jwt', {session: false});
 module.exports = {
 	validarCrearCuenta,
     validarEditarCuenta,
+    cargarImagen,
+    resizeImg,
 	auth
 }

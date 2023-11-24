@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const objId = require("mongoose").Types.ObjectId;
 const ac = require("../middlewares/roles");
 const Usuario = require("../models/Usuario");
+const { resizeImg } = require("../middlewares/usuarios.middlewares");
 
 // funcion que valida si se encontraron errores en el express-validator
 const validarDatos = (req) => {
@@ -141,16 +142,42 @@ const editarUsuario = async (req, res) => {
   }
 };
 
+const imagenUsuario = async (req, res) => {
+  try {
+    const idValido = validarId(req.params.id);
+    if (!idValido) return res.status(401).json({ msg: "El id es incorrecto" });
+
+    const permiso = ac.can(req.user.rol).updateAny("usuario");
+    const verifyId = req.user._id.toString() === req.params.id ? true : false;
+    if (!permiso.granted && !verifyId) {
+      return res.status(401).json("Unauthorized");
+    }
+
+    const imagen = req.file;
+
+    await Usuario.findByIdAndUpdate(
+      req.params.id,
+      { imagen: resizeImg(imagen.path, imagen.filename, 600, 600, "usuarios") },
+      { new: true }
+    );
+
+    return res.status(200).json({ msg: "Imagen Actualizada" });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+  }
+};
+
 // funcion que devuelve los datos del usuario logueado
 const verificarLogin = async (req, res) => {
-    try {
-      const datos = req.user;
-      res.status(200).json(datos);
-    } catch (err) {
-      console.log(err);
-      res.status(400).json(err);
-    }
-  };
+  try {
+    const datos = req.user;
+    res.status(200).json(datos);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+  }
+};
 
 module.exports = {
   mostrarUsuarios,
@@ -159,4 +186,5 @@ module.exports = {
   eliminarUsuario,
   editarUsuario,
   verificarLogin,
+  imagenUsuario,
 };
