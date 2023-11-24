@@ -5,12 +5,18 @@ const ac = new AccessControl();
 ac.grant('usuario')
     .updateOwn('usuario')
     .readOwn('usuario')
-  .grant('admin')
+  .grant('cajero')
     .extend('usuario')
+  .grant('admin')
+    .extend('cajero')
     .createAny('usuario')
     .readAny('usuario')
     .updateAny('usuario')
     .deleteAny('usuario')
+    .createAny('pizza')
+    .readAny('pizza')
+    .updateAny('pizza')
+    .deleteAny('pizza')
 
 
 module.exports = ac;
