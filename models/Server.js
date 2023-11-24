@@ -13,11 +13,17 @@ class Server {
 
     this.port = process.env.PORT;
 
+    this.path = {
+      auth: "/api/auth",
+    };
+
     this.dataBase();
 
     this.middlewares();
     
     this.initialSetup();
+
+    this.routes();
     
     this.listen();
 
@@ -40,6 +46,10 @@ class Server {
     await crearAdmin();
   }
 
+  // Metodo que carga las rutas
+  routes() {
+    this.app.use(this.path.auth, require("../routes/auth.routes"));
+  }
 
   // metodo que arranca el servidor
   listen() {
