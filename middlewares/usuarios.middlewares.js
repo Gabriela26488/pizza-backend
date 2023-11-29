@@ -65,6 +65,7 @@ const validarCrearCuenta = [
 		.isLength({min: 8}).withMessage('La contraseña debe tener al menos 8 caracteres'),
     
   body('nombres')
+		.not().isEmpty().withMessage("El nombre y apellido son requeridos").bail()	
 		.exists().withMessage('Nombre es requerido').bail()
 		.isString().withMessage('Ingresa un nombre valido').bail()
 		.matches("^([\Na-zA-ZáéíóúÁÉÍÓÚñÑ' ]+)$").withMessage('los nombres solo deben de tener letras'),  
@@ -101,7 +102,7 @@ const validarEditarCuenta = [
 	body('telefono')
 		.optional().bail()
 		.isString().withMessage('El telefono debe ser string').bail()
-		.matches("^[0-9]{11}$").withMessage('el telefono solo debe tener numeros y un tamaño de 11 caracteres').bail(),
+		.matches("^[0-9 ]*$").withMessage('el telefono solo debe tener numeros y un tamaño de 11 caracteres').bail(),
     body('direccion')
 		.optional().bail()
 		.isString().withMessage('Ingresa una direccion valida'),

@@ -36,23 +36,29 @@ const validaNegativo = async (numero) => {
 
 const validarCrearPizza = [
 	body("nombre").exists().withMessage("Nombre es requerido").bail()
+	.not().isEmpty().withMessage("Nombre es requerido").bail()
     .isString().withMessage("Ingresa un nombre valido").bail()
 		.custom(validaNombre),
-	body("ingredientes").exists().withMessage("ingredientes es requerido").bail()
+	body("ingredientes").exists().withMessage("|Ingredientes es requerido").bail()
+	.not().isEmpty().withMessage("Ingredientes es requerido").bail()
     .isString().withMessage("Ingresa ingredientes validos"),
 	body("cantidad").exists().withMessage("cantidad es requerido").bail()
 		.isNumeric().withMessage("Ingresa un monto valido").bail()
 		.custom(validaNegativo),
 	body("familiar").exists().withMessage("precio de familiar es requerido").bail()
+		.not().isEmpty().withMessage("Precio de familiar es requerido").bail()
 		.isNumeric().withMessage("Ingrese un precio de familiar valido").bail()
 		.custom(validaNegativo),
-	body("mediana").exists().withMessage("precio de mediana es requerido").bail()
+	body("mediana").exists().withMessage("Precio de mediana es requerido").bail()
+		.not().isEmpty().withMessage("Precio de mediana es requerido").bail()
 		.isNumeric().withMessage("Ingrese un precio de mediana valido").bail()
 		.custom(validaNegativo),
-	body("pequena").exists().withMessage("precio de pequeña es requerido").bail()
+	body("pequena").exists().withMessage("Precio de pequeña es requerido").bail()
+		.not().isEmpty().withMessage("Precio de pequeña es requerido").bail()
 		.isNumeric().withMessage("Ingrese un precio de pequeña valido").bail()
 		.custom(validaNegativo),
-	body("porcion").exists().withMessage("precio de porcion es requerido").bail()
+	body("porcion").exists().withMessage("Precio de porcion es requerido").bail()
+		.not().isEmpty().withMessage("Precio de porcion es requerido").bail()
 		.isNumeric().withMessage("Ingrese un precio de porcion valido").bail()
 		.custom(validaNegativo)
 ]

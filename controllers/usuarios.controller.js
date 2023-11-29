@@ -155,13 +155,13 @@ const imagenUsuario = async (req, res) => {
 
     const imagen = req.file;
 
-    await Usuario.findByIdAndUpdate(
+    const update = await Usuario.findByIdAndUpdate(
       req.params.id,
       { imagen: resizeImg(imagen.path, imagen.filename, 600, 600, "usuarios") },
       { new: true }
     );
 
-    return res.status(200).json({ msg: "Imagen Actualizada" });
+    return res.status(200).json({ msg: "Imagen Actualizada", update });
   } catch (err) {
     console.log(err);
     res.status(400).json(err);
